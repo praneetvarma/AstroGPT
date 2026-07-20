@@ -7,7 +7,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
+        "https://astro-33hiwm5gn-astro-ai2.vercel.app/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
