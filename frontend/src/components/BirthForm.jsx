@@ -16,7 +16,10 @@ const months = [
   { value: 11, label: "November" },
   { value: 12, label: "December" },
 ];
-const years = Array.from({ length: 100 }, (_, index) => new Date().getFullYear() - index);
+const years = Array.from(
+  { length: 100 },
+  (_, index) => new Date().getFullYear() - index,
+);
 const hours = Array.from({ length: 12 }, (_, index) => index + 1);
 const minutes = Array.from({ length: 60 }, (_, index) => index);
 const periods = ["AM", "PM"];
@@ -40,14 +43,17 @@ function parseReadingSections(reading) {
 
   lines.forEach((line) => {
     const normalized = line.replace(/^[-*•]\s*/, "").trim();
-    const isHeading = normalized.length < 60 && (
-      /[:\-–—]$/.test(normalized) ||
-      /^[A-Z][A-Za-z\s&/()]+$/.test(normalized) ||
-      /^#{1,3}\s/.test(normalized)
-    );
+    const isHeading =
+      normalized.length < 60 &&
+      (/[:\-–—]$/.test(normalized) ||
+        /^[A-Z][A-Za-z\s&/()]+$/.test(normalized) ||
+        /^#{1,3}\s/.test(normalized));
 
     if (isHeading) {
-      const heading = normalized.replace(/^#{1,3}\s*/, "").replace(/[:\-–—]$/, "").trim();
+      const heading = normalized
+        .replace(/^#{1,3}\s*/, "")
+        .replace(/[:\-–—]$/, "")
+        .trim();
       currentSection = { heading: heading || "Cosmic Insight", bullets: [] };
       sections.push(currentSection);
       return;
@@ -66,7 +72,9 @@ function parseReadingSections(reading) {
     }
   });
 
-  return sections.length > 0 ? sections : [{ heading: "Cosmic Insight", bullets: [reading] }];
+  return sections.length > 0
+    ? sections
+    : [{ heading: "Cosmic Insight", bullets: [reading] }];
 }
 
 function BirthForm() {
@@ -133,22 +141,23 @@ function BirthForm() {
       const response = await api.post("/generate-reading", payload);
       setResult(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("AstroGPT API error:", error);
 
       if (error.response) {
+        const backendMessage =
+          error.response.data?.detail ||
+          error.response.data?.message ||
+          "The server returned an error.";
+
         alert(
-          `Backend Error (${error.response.status})\n\n${JSON.stringify(
-            error.response.data,
-            null,
-            2
-          )}`
+          `AstroGPT server error (${error.response.status})\n\n${backendMessage}`,
         );
       } else if (error.request) {
         alert(
-          "No response from backend.\n\nIs FastAPI running on http://127.0.0.1:8000 ?"
+          "Unable to connect to the AstroGPT server. The server may be waking up. Please wait about 30 seconds and try again.",
         );
       } else {
-        alert(error.message);
+        alert(`Something went wrong: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -160,12 +169,15 @@ function BirthForm() {
       <div className="glass-panel w-full overflow-hidden p-6 sm:p-8 lg:p-10">
         <div className="space-y-6">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">Birth details</p>
+            <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">
+              Birth details
+            </p>
             <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">
               Build your cosmic profile.
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-400">
-              Enter your birthplace and precise birth timing to generate a premium reading.
+              Enter your birthplace and precise birth timing to generate a
+              premium reading.
             </p>
           </div>
 
@@ -185,10 +197,14 @@ function BirthForm() {
 
             <div className="grid gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">Day</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  Day
+                </label>
                 <select
                   value={birthDate.day}
-                  onChange={(e) => setBirthDate({ ...birthDate, day: e.target.value })}
+                  onChange={(e) =>
+                    setBirthDate({ ...birthDate, day: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {days.map((day) => (
@@ -200,10 +216,14 @@ function BirthForm() {
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">Month</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  Month
+                </label>
                 <select
                   value={birthDate.month}
-                  onChange={(e) => setBirthDate({ ...birthDate, month: e.target.value })}
+                  onChange={(e) =>
+                    setBirthDate({ ...birthDate, month: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {months.map((month) => (
@@ -215,10 +235,14 @@ function BirthForm() {
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">Year</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  Year
+                </label>
                 <select
                   value={birthDate.year}
-                  onChange={(e) => setBirthDate({ ...birthDate, year: e.target.value })}
+                  onChange={(e) =>
+                    setBirthDate({ ...birthDate, year: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {years.map((year) => (
@@ -232,10 +256,14 @@ function BirthForm() {
 
             <div className="grid gap-4 md:grid-cols-[1fr_1fr_0.8fr]">
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">Hour</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  Hour
+                </label>
                 <select
                   value={birthTime.hour}
-                  onChange={(e) => setBirthTime({ ...birthTime, hour: e.target.value })}
+                  onChange={(e) =>
+                    setBirthTime({ ...birthTime, hour: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {hours.map((hour) => (
@@ -247,10 +275,14 @@ function BirthForm() {
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">Minute</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  Minute
+                </label>
                 <select
                   value={birthTime.minute}
-                  onChange={(e) => setBirthTime({ ...birthTime, minute: e.target.value })}
+                  onChange={(e) =>
+                    setBirthTime({ ...birthTime, minute: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {minutes.map((minute) => (
@@ -262,10 +294,14 @@ function BirthForm() {
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
-                <label className="mb-2 block text-sm font-medium text-slate-400">AM / PM</label>
+                <label className="mb-2 block text-sm font-medium text-slate-400">
+                  AM / PM
+                </label>
                 <select
                   value={birthTime.period}
-                  onChange={(e) => setBirthTime({ ...birthTime, period: e.target.value })}
+                  onChange={(e) =>
+                    setBirthTime({ ...birthTime, period: e.target.value })
+                  }
                   className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm outline-none transition focus:border-fuchsia-400"
                 >
                   {periods.map((period) => (
@@ -312,8 +348,12 @@ function BirthForm() {
         <div className="mt-8 w-full rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 shadow-2xl shadow-black/20 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">Astrology reading</p>
-              <h3 className="mt-2 text-2xl font-semibold text-white">Your cosmic story</h3>
+              <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">
+                Astrology reading
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold text-white">
+                Your cosmic story
+              </h3>
             </div>
             {loading ? (
               <div className="rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-2 text-sm text-fuchsia-200">
@@ -324,9 +364,15 @@ function BirthForm() {
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {Object.entries(result.birth_chart || {})
-              .filter(([name, value]) => name !== "Nakshatra" && typeof value === "object")
+              .filter(
+                ([name, value]) =>
+                  name !== "Nakshatra" && typeof value === "object",
+              )
               .map(([name, value]) => (
-                <div key={name} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:-translate-y-1 hover:border-fuchsia-400/40">
+                <div
+                  key={name}
+                  className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:-translate-y-1 hover:border-fuchsia-400/40"
+                >
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="text-lg font-semibold text-white">{name}</h4>
                     <span className="rounded-full bg-fuchsia-500/10 px-2.5 py-1 text-xs font-medium text-fuchsia-200">
@@ -334,7 +380,10 @@ function BirthForm() {
                     </span>
                   </div>
                   <p className="mt-4 text-sm leading-7 text-slate-400">
-                    Longitude: <span className="text-white">{value.longitude_rounded}°</span>
+                    Longitude:{" "}
+                    <span className="text-white">
+                      {value.longitude_rounded}°
+                    </span>
                   </p>
                 </div>
               ))}
@@ -349,17 +398,29 @@ function BirthForm() {
 
           <div className="mt-10 rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-950/80 to-purple-950/40 p-6 sm:p-8">
             <div className="mb-6 text-center">
-              <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">Cosmic Analysis</p>
-              <h4 className="mt-3 text-3xl font-semibold text-white">Your Cosmic Profile</h4>
+              <p className="text-sm uppercase tracking-[0.35em] text-fuchsia-300">
+                Cosmic Analysis
+              </p>
+              <h4 className="mt-3 text-3xl font-semibold text-white">
+                Your Cosmic Profile
+              </h4>
             </div>
 
             <div className="space-y-6">
               {readingSections.map((section, index) => (
-                <section key={`${section.heading}-${index}`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-                  <h5 className="text-lg font-semibold text-white">{section.heading}</h5>
+                <section
+                  key={`${section.heading}-${index}`}
+                  className="rounded-2xl border border-white/10 bg-slate-900/70 p-5"
+                >
+                  <h5 className="text-lg font-semibold text-white">
+                    {section.heading}
+                  </h5>
                   <ul className="mt-3 space-y-2 text-sm leading-7 text-slate-300">
                     {section.bullets.map((bullet, bulletIndex) => (
-                      <li key={`${section.heading}-${bulletIndex}`} className="flex gap-2">
+                      <li
+                        key={`${section.heading}-${bulletIndex}`}
+                        className="flex gap-2"
+                      >
                         <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-fuchsia-400" />
                         <span>{bullet}</span>
                       </li>
