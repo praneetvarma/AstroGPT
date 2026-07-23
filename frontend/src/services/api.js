@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://astrogpt-api.onrender.com",
+  baseURL: "https://astrogpt-1.onrender.com",
   timeout: 120000,
 });
 
